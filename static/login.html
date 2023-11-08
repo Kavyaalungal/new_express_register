@@ -6,18 +6,18 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Register Here!</h1>
-    <form onsubmit="register(event)">
+    <h1>Login Here!</h1>
+    <form onsubmit="login(event)">
         <input type="text" name="username" id="username" placeholder="username"><br><br>
         <input type="password" name="password" id="password" placeholder="password"><br><br>
         <input type="submit" value="Login">
     </form>
     <script>
         let username = document.getElementById("username");
-        let password = document.getElementById("password");
-        function register(event){
+        let password = document.getElementById("password")
+        function login(event) {
             event.preventDefault();
-            fetch("http://localhost:3000/api/register",{
+            fetch("http://localhost:3000/api/login",{
                 method:"post",
                 headers:{
                     "Content-Type":"application/json"
@@ -27,18 +27,17 @@
                     password:password.value
                 })
             })
-            .then(res=>{
-                if(res.status === 200){
-                    alert("Registration successful!")
-                    location.href="http://localhost:3000/login.html"
-                }
+            .then(res=>res.json())
+            .then(data=>{
+                alert(data.msg);
+                localStorage.setItem("token",data.token);
+                location.href="http://localhost:3000/user.html"
             })
-             .catch(error=>{
+            .catch(error=>{
                 console.log(error);
-             })  
+            })
             
         }
     </script>
-    
 </body>
 </html>
