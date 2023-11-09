@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import userSchema from "./Schema/user.schema.js";
-import notesSchema from "./model/notes.schema.js";
+import notesSchema from "./Schema/notes.schema.js";
 
 import jwt from "jsonwebtoken";
 
@@ -92,5 +92,19 @@ export async function addNote(req,res){
     catch (error) {
         console.log(error);
         res.status(500).send("Error");
+    }
+ }
+ export async function getNote(req,res){
+    try {
+        let { id } = req.user;
+        let result = await notesSchema.find({userId: id})
+        console.log(result);
+        if(result){
+            return res.status(200).send(result);
+        }
+        return res.status(200).send({msg : "NO notes to show"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("error");
     }
  }

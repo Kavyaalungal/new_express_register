@@ -11,10 +11,12 @@
         <textarea name="note" id="note" cols="30" rows="10"></textarea>
         <input type="submit" value="add">
     </form>
+    <ol id="notes"></ol>
     <script>
         let headding = document.getElementById("headding");
         let note = document.getElementById("note");
         let token = localStorage.getItem("token");
+        let notes = document.getElementById("notes");
         function add(event) {
             event.preventDefault()
             console.log(note.value);
@@ -50,6 +52,23 @@
             })
             .catch(error => {
                 console.log(error);
+            })
+            fetch("http://localhost:3000/api/get-note",{
+                method:"get",
+                headers:{
+                    authorization:`Beare ${token}`
+                }
+            })
+            .then(res => res.json())
+            .then(data =>{
+                notes.innerHTML = "";
+                if(data.msg){
+                    notes.innerHTML = "data.msg";
+                }
+                data.forEach(item =>{
+                    let li = `<li>${item.note}</li>`;
+                    notes.innerHTML += li;
+                })
             })
         }
         profile()
