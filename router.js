@@ -8,6 +8,6 @@ const router = Router()
 router.route("/register").post(userHandlers.register);
 router.route("/login").post(userHandlers.login);
 router.route("/profile").get(auth,userHandlers.profile);
-router.route("/addNote").post(auth,userHandlers.addNote);
+router.route("/add-note").post(auth,userHandlers.addNote);
 
 export default router;
