@@ -63,3 +63,32 @@ export async function register(req,res){
         res.status(500).send("Error");
     }
  }
+export async function profile(req,res){
+    try{
+        let user = req.user;
+        let userDetails = await userSchema.findOne({_id: user.id},{password:0});
+        if(userDetails){
+            return res.json(userDetails);
+        }
+        return res.status(404).send("User not found");
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send("Error");
+    }
+ }
+export async function addNote(req,res){
+    try{
+        let { note }= req.body;
+        let { id } = req.user;
+        let result = await notesSchema.create({
+            note,
+            userId:id
+        })
+        res.json("note added successfully");
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send("Error");
+    }
+ }
