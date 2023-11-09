@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
-import userSchema from "./Schema/user.schema.js"
+import userSchema from "./Schema/user.schema.js";
+import notesSchema from "./model/notes.schema.js";
+
 import jwt from "jsonwebtoken";
 
 const { sign } = jwt;
