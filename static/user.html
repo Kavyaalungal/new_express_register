@@ -11,6 +11,9 @@
         <textarea name="note" id="note" cols="30" rows="10"></textarea>
         <input type="submit" value="add">
     </form>
+    <form onsubmit="add1(event)">
+        <input type="submit" value="update">
+    </form>
     <ol id="notes"></ol>
     <script>
         let headding = document.getElementById("headding");
@@ -56,22 +59,25 @@
             fetch("http://localhost:3000/api/get-note",{
                 method:"get",
                 headers:{
-                    authorization:`Beare ${token}`
+                    authorization:`Bearer ${token}`
                 }
             })
             .then(res => res.json())
             .then(data =>{
                 notes.innerHTML = "";
                 if(data.msg){
-                    notes.innerHTML = "data.msg";
+                    notes.innerHTML = data.msg;
+                    return;
                 }
                 data.forEach(item =>{
                     let li = `<li>${item.note}</li>`;
                     notes.innerHTML += li;
                 })
             })
+            
         }
         profile()
+        
     </script>
 </body>
 </html>

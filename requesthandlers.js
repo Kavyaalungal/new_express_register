@@ -13,7 +13,7 @@ const { sign } = jwt;
 
 export async function register(req,res){
     try {
-        let {username, password} = req.body;
+        let {username, password, email,phone} = req.body;
         if(username.length < 4 && password.length < 4){
             return res.json("Invalid username or password");
         }
@@ -22,7 +22,7 @@ export async function register(req,res){
         if(userExist){
             return res.status(401).send("User already exists");
         }
-        let result = await userSchema.create({username, password: hashedpass});
+        let result = await userSchema.create({username, password: hashedpass,email,phone});
         return res.status(200).send("Registration successful!");
         
     } catch (error) {
@@ -99,12 +99,19 @@ export async function addNote(req,res){
         let { id } = req.user;
         let result = await notesSchema.find({userId: id})
         console.log(result);
-        if(result){
+        if(result.length>0){
             return res.status(200).send(result);
         }
         return res.status(200).send({msg : "NO notes to show"});
     } catch (error) {
         console.log(error);
         res.status(500).send("error");
+    }
+ }
+ export async function update(req,res){
+    try {
+        
+    } catch (error) {
+        
     }
  }

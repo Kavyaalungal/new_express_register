@@ -10,11 +10,15 @@
     <form onsubmit="register(event)">
         <input type="text" name="username" id="username" placeholder="username"><br><br>
         <input type="password" name="password" id="password" placeholder="password"><br><br>
-        <input type="submit" value="Login">
+        <input type="email" name="email" id="email" placeholder="emailId"><br><br>
+        <input type="text" name="phone" id="phone" placeholder="phonenumber"><br><br>
+        <input type="submit" value="Register">
     </form>
     <script>
         let username = document.getElementById("username");
         let password = document.getElementById("password");
+        let email = document.getElementById("email");
+        let phone = document.getElementById("phone");
         function register(event){
             event.preventDefault();
             fetch("http://localhost:3000/api/register",{
@@ -24,7 +28,9 @@
                 },
                 body:JSON.stringify({
                     username:username.value,
-                    password:password.value
+                    password:password.value,
+                    email:email.value,
+                    phone:phone.value
                 })
             })
             .then(res=>{
