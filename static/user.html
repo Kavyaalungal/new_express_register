@@ -6,44 +6,30 @@
     <title>User page</title>
 </head>
 <body>
-    <h1 id="headding">User</h1>
+    <h1 id="heading">User</h1>
     <form onsubmit="add(event)">
         <textarea name="note" id="note" cols="30" rows="10"></textarea>
-        <input type="submit" value="add">
-    </form>
-    <form onsubmit="add1(event)">
-        <input type="submit" value="update">
+        <input type="submit" value="Add">
     </form>
     <ol id="notes"></ol>
+
+    <!-- Add a button to navigate to the update page -->
+    <button onclick="goToUpdatePage()">Update User Details</button>
+
     <script>
-        let headding = document.getElementById("headding");
-        let note = document.getElementById("note");
+        let heading = document.getElementById("heading");
+        let noteInput = document.getElementById("note");
         let token = localStorage.getItem("token");
-        let notes = document.getElementById("notes");
-        function add(event) {
-            event.preventDefault()
-            console.log(note.value);
-            fetch("http://localhost:3000/api/add-note", {
-                method: "post",
-                headers: {
-                    authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    note: note.value
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data)
-            })
-            .catch(error => {
-                console.log(error);
-            })
+        let notesList = document.getElementById("notes");
+
+        function addToNotesList(note) {
+            let li = document.createElement("li");
+            li.textContent = note;
+            notesList.appendChild(li);
         }
 
-        function profile() {
-            fetch("http://localhost:3000/api/profile", {
+        function updateNotes() {
+            fetch("http://localhost:3000/api/get-note", {
                 method: "get",
                 headers: {
                     authorization: `Bearer ${token}`
@@ -51,33 +37,63 @@
             })
             .then(res => res.json())
             .then(data => {
-                headding.innerHTML = `Welcome ${data.username}`
+                notesList.innerHTML = "";
+                if (data.msg) {
+                    addToNotesList(data.msg);
+                    return;
+                }
+                data.forEach(item => {
+                    addToNotesList(item.note);
+                });
             })
             .catch(error => {
                 console.log(error);
-            })
-            fetch("http://localhost:3000/api/get-note",{
-                method:"get",
-                headers:{
-                    authorization:`Bearer ${token}`
-                }
-            })
-            .then(res => res.json())
-            .then(data =>{
-                notes.innerHTML = "";
-                if(data.msg){
-                    notes.innerHTML = data.msg;
-                    return;
-                }
-                data.forEach(item =>{
-                    let li = `<li>${item.note}</li>`;
-                    notes.innerHTML += li;
+            });
+        }
+
+        function addToNotes(event) {
+            event.preventDefault();
+            fetch("http://localhost:3000/api/add-note", {
+                method: "post",
+                headers: {
+                    authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    note: noteInput.value
                 })
             })
-            
+            .then(res => res.json())
+            .then(data => {
+                alert(data);
+                updateNotes();
+            })
+            .catch(error => {
+                console.log(error);
+            });
         }
-        profile()
-        
+
+        function goToUpdatePage() {
+            window.location.href = "update.html";
+        }
+
+        // Fetch user details including email and phone
+        fetch("http://localhost:3000/api/profile", {
+            method: "get",
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            heading.innerHTML = `Welcome ${data.username}`;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+        // Fetch and update user notes
+        updateNotes();
     </script>
 </body>
 </html>
