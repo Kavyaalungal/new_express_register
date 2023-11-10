@@ -108,10 +108,17 @@ export async function addNote(req,res){
         res.status(500).send("error");
     }
  }
- export async function update(req,res){
+export async function updateDetails(req, res) {
     try {
-        
+        let { email, phone } = req.body;
+        let userId = req.user.id;
+
+        // Update the user details in the database
+        await userSchema.updateOne({ _id: userId }, { email, phone });
+
+        res.status(200).send("User details updated successfully!");
     } catch (error) {
-        
+        console.log(error);
+        res.status(500).send("Error updating user details");
     }
- }
+}
