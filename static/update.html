@@ -3,13 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Update User Details</title>
 </head>
 <body>
-    <form>
-        <input type="email" name="email" id="email" placeholder="emailId"><br><br>
-        <input type="text" name="phone" id="phone" placeholder="phonenumber"><br><br>
-        <input type="submit" value="update">
+    <h1>Update User Details</h1>
+    <form onsubmit="updateDetails(event)">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" placeholder="emailId" required><br><br>
+        <label for="phone">Phone:</label>
+        <input type="text" name="phone" id="phone" placeholder="phonenumber" required><br><br>
+        <input type="submit" value="Update">
     </form>
+    <script>
+        let emailInput = document.getElementById("email");
+        let phoneInput = document.getElementById("phone");
+        let token = localStorage.getItem("token");
+
+        function updateDetails(event) {
+            event.preventDefault();
+            fetch("http://localhost:3000/api/update-details", {
+                method: "put",
+                headers: {
+                    authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: emailInput.value,
+                    phone: phoneInput.value
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
+    </script>
 </body>
 </html>
