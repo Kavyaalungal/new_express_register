@@ -69,6 +69,9 @@ export async function profile(req,res){
     try{
         let user = req.user;
         let userDetails = await userSchema.findOne({_id: user.id},{password:0});
+        // Fetch user details including email and phone
+let userDetails = await userSchema.findOne({ _id: user.id }, { password: 0, _id: 0 });
+
         if(userDetails){
             return res.json(userDetails);
         }
