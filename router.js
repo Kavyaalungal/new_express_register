@@ -10,5 +10,6 @@ router.route("/login").post(userHandlers.login);
 router.route("/profile").get(auth,userHandlers.profile);
 router.route("/add-note").post(auth,userHandlers.addNote);
 router.route("/get-note").get(auth,userHandlers.getNote);
+router.route("/update-details").put(auth, userHandlers.updateDetails);
 
 export default router;
