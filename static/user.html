@@ -6,53 +6,23 @@
     <title>User page</title>
 </head>
 <body>
-    <h1 id="heading">User</h1>
+    <h1 id="headding">User</h1>
     <form onsubmit="add(event)">
         <textarea name="note" id="note" cols="30" rows="10"></textarea>
-        <input type="submit" value="Add">
+        <input type="submit" value="add">
+    </form>
+    <form onsubmit="add1(event)">
+        <input type="submit" value="update">
     </form>
     <ol id="notes"></ol>
-
-    <!-- Add a button to navigate to the update page -->
-    <button onclick="goToUpdatePage()">Update User Details</button>
-
     <script>
-        let heading = document.getElementById("heading");
-        let noteInput = document.getElementById("note");
+        let headding = document.getElementById("headding");
+        let note = document.getElementById("note");
         let token = localStorage.getItem("token");
-        let notesList = document.getElementById("notes");
-
-        function addToNotesList(note) {
-            let li = document.createElement("li");
-            li.textContent = note;
-            notesList.appendChild(li);
-        }
-
-        function updateNotes() {
-            fetch("http://localhost:3000/api/get-note", {
-                method: "get",
-                headers: {
-                    authorization: `Bearer ${token}`
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                notesList.innerHTML = "";
-                if (data.msg) {
-                    addToNotesList(data.msg);
-                    return;
-                }
-                data.forEach(item => {
-                    addToNotesList(item.note);
-                });
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        }
-
-        function addToNotes(event) {
-            event.preventDefault();
+        let notes = document.getElementById("notes");
+        function add(event) {
+            event.preventDefault()
+            console.log(note.value);
             fetch("http://localhost:3000/api/add-note", {
                 method: "post",
                 headers: {
@@ -60,40 +30,54 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    note: noteInput.value
+                    note: note.value
                 })
             })
             .then(res => res.json())
             .then(data => {
-                alert(data);
-                updateNotes();
+                alert(data)
             })
             .catch(error => {
                 console.log(error);
-            });
+            })
         }
 
-        function goToUpdatePage() {
-            window.location.href = "update.html";
+        function profile() {
+            fetch("http://localhost:3000/api/profile", {
+                method: "get",
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                headding.innerHTML = `Welcome ${data.username}`
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            fetch("http://localhost:3000/api/get-note",{
+                method:"get",
+                headers:{
+                    authorization:`Bearer ${token}`
+                }
+            })
+            .then(res => res.json())
+            .then(data =>{
+                notes.innerHTML = "";
+                if(data.msg){
+                    notes.innerHTML = data.msg;
+                    return;
+                }
+                data.forEach(item =>{
+                    let li = `<li>${item.note}</li>`;
+                    notes.innerHTML += li;
+                })
+            })
+            
         }
-
-        // Fetch user details including email and phone
-        fetch("http://localhost:3000/api/profile", {
-            method: "get",
-            headers: {
-                authorization: `Bearer ${token}`
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            heading.innerHTML = `Welcome ${data.username}`;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-
-        // Fetch and update user notes
-        updateNotes();
+        profile()
+        
     </script>
 </body>
 </html>

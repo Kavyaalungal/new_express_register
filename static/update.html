@@ -1,45 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update User Details</title>
+    <title>Document</title>
 </head>
+
 <body>
-    <h1>Update User Details</h1>
     <form onsubmit="updateDetails(event)">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" placeholder="emailId" required><br><br>
-        <label for="phone">Phone:</label>
-        <input type="text" name="phone" id="phone" placeholder="phonenumber" required><br><br>
-        <input type="submit" value="Update">
+        <input type="email" name="email" id="email" placeholder="emailId"><br><br>
+        <input type="text" name="phone" id="phone" placeholder="phonenumber"><br><br>
+        <input type="file" name="image" id="image"><br><br>
+        <input type="submit" value="update">
     </form>
+    <img alt="image">
     <script>
-        let emailInput = document.getElementById("email");
-        let phoneInput = document.getElementById("phone");
+        let email = document.getElementById("email");
+        let phone = document.getElementById("phone");
+        let image = document.getElementById("image");
+        let img = document.getElementsByTagName("img")[0];
         let token = localStorage.getItem("token");
+
 
         function updateDetails(event) {
             event.preventDefault();
-            fetch("http://localhost:3000/api/update-details", {
-                method: "put",
-                headers: {
-                    authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: emailInput.value,
-                    phone: phoneInput.value
+            readFile(image.files[0])
+                .then(file => {
+                    console.log(file);
+                    img.src = file;
+                    fetch("http://localhost:3000/api/update-details", {
+                        method: "put",
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            image: file,
+                            email: email.value,
+                            phone: phone.value
+                        })
+
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            alert(data);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+
                 })
+
+        }
+
+        function readFile(file) {
+            return new Promise((res, rej) => {
+                let fileReader = new FileReader();
+                fileReader.readAsDataURL(file);
+                fileReader.onload = () => {
+                    res(fileReader.result);
+                }
+                fileReader.onerror = () => {
+                    rej(fileReader.error);
+                }
             })
-            .then(res => res.json())
-            .then(data => {
-                alert(data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+
         }
     </script>
 </body>
+
 </html>
